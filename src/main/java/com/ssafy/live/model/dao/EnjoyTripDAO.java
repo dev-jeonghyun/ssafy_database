@@ -1,0 +1,37 @@
+package com.ssafy.live.model.dao;
+import java.util.*;
+import com.ssafy.live.model.dto.*;
+public interface EnjoyTripDAO {
+    Map<String, Long> tableCounts();
+    List<SidoDTO> findSidos();
+    List<GugunDTO> findGuguns(int sidoCode);
+    List<ContentTypeDTO> findContentTypes();
+    List<AttractionDTO> findAttractions(AttractionSearch search);
+    int countAttractions(AttractionSearch search);
+    AttractionDTO findAttraction(int no);
+    AttractionDTO findAttractionByContentId(int contentId);
+    MemberDTO findMember(String loginId);
+    MemberDTO findMember(long id);
+    List<MemberDTO> findMembers(SearchCondition condition);
+    int countMembers(SearchCondition condition);
+    long insertMember(MemberDTO member);
+    void updateMember(MemberDTO member);
+    boolean deactivateMember(String loginId);
+    boolean updatePassword(String loginId, String hash);
+    List<PostDTO> findPosts();
+    PostDTO findPost(long id);
+    long insertPost(PostDTO post);
+    void updatePost(PostDTO post);
+    boolean deletePost(long id);
+    List<CommentDTO> findComments();
+    long insertComment(CommentDTO comment);
+    boolean deleteComment(long id, long actorId);
+    Map<Long, String> findAuthorNames();
+    List<TripPlanDTO> findPlans(long memberId);
+    List<TripPlanPlaceDTO> findPlanPlaces(long planId);
+    long insertPlan(TripPlanDTO plan, List<TripPlanPlaceDTO> places);
+    boolean deletePlan(long id, long memberId);
+    List<TravelRecordDTO> findRecords(long memberId);
+    long insertRecord(TravelRecordDTO record);
+    boolean deleteRecord(long id, long memberId);
+}

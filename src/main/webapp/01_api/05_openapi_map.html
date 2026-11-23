@@ -1,0 +1,421 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EnjoyTrip | 관광지 검색과 여행 동선</title>
+  <meta name="description" content="관광지를 지도에서 찾고 여행 계획과 핫플을 저장하세요.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" rel="stylesheet">
+
+  <link href="../css/style.css?v=20261106-map-select-fix" rel="stylesheet" />
+</head>
+
+<body class="map-page">
+  <main class="explorer">
+      <div class="explorer-tabs" role="tablist" aria-label="여행 도구">
+        <button type="button" id="explore-tab" role="tab" aria-controls="planning-workspace" aria-selected="true">지도 탐색과 동선 수립</button>
+        <button type="button" id="hotplace-tab" role="tab" aria-controls="travel-record-section" aria-selected="false" tabindex="-1">나의 핫플</button>
+      </div>
+    <div id="planning-workspace" class="explorer-tools" role="tabpanel" aria-labelledby="explore-tab">
+  <section id="attraction-section" aria-label="지도 탐색" tabindex="0">
+
+    <div class="search-area">
+
+      <div class="search-title">
+        <h2>지역별 관광지 찾기</h2>
+        
+      </div>
+
+      <div class="search-controls">
+        <label class="filter-field" for="selectContentType"><span>콘텐츠 유형</span><select id="selectContentType" data-type="콘텐츠" aria-label="관광 콘텐츠 유형">
+          <option value="">콘텐츠 전체</option>
+          <option value="12">관광지</option>
+          <option value="14">문화시설</option>
+          <option value="15">공연·축제</option>
+          <option value="25">여행코스</option>
+          <option value="28">레포츠</option>
+          <option value="32">숙박</option>
+          <option value="38">쇼핑</option>
+          <option value="39">음식점</option>
+        </select></label>
+
+        <label class="filter-field" for="selectSido"><span>시도</span><select id="selectSido" aria-label="시도" data-type="시도">
+          <option value="" selected disabled>시도 선택</option>
+        </select></label>
+
+        <label class="filter-field" for="selectGugun"><span>시군구</span><select id="selectGugun" aria-label="구군" data-type="구군">
+          <option value="" selected disabled>구군 선택</option>
+        </select></label>
+
+      </div>
+
+      <div class="search-actions">
+        <button id="btn_around_search" disabled>
+          주변 관광지 조회
+        </button>
+
+        <button id="btn_trip_search" disabled class="primary-button">
+          관광지 조회
+        </button>
+      </div>
+
+      <p id="tour-status" role="status" aria-live="polite"></p>
+      <div id="tour-pagination" hidden>
+        <button type="button" id="tour-prev">이전</button>
+        <span id="tour-page"></span>
+        <button type="button" id="tour-next">다음</button>
+      </div>
+      <ol id="tour-result-list"></ol>
+
+    </div>
+
+    <details class="explorer-help"><summary>지도 이용 안내와 데이터 출처</summary>
+    <div class="explorer-guide">
+      <h3>장소에서 여행으로</h3>
+      <ol>
+        <li>지역과 분류를 선택해 관광지를 조회하세요.</li>
+        <li>지도 마커에서 마음에 드는 장소를 계획에 담으세요.</li>
+        <li>옆의 여행 동선에서 순서를 정하고 저장하세요.</li>
+      </ol>
+    </div>
+    <div class="reference-links">
+      <span>데이터 출처</span>
+      <ul>
+        <li><a href="https://apis.map.kakao.com/web/" target="_blank" rel="noopener">카카오맵</a></li>
+        <li><a href="https://www.data.go.kr/index.do" target="_blank" rel="noopener">공공데이터</a></li>
+      </ul>
+    </div>
+  </details>
+  </section>
+
+
+  <!-- =====================================
+       F104 - 나의 여행 계획
+  ====================================== -->
+
+  <section id="trip-plan-section" aria-label="동선 수립" tabindex="0">
+
+    <header class="section-header">
+
+      <div>
+        <h2>나의 여행 동선</h2>
+      </div>
+
+      <p class="section-description">
+        여행지를 끌어 순서를 바꿔보세요.
+      </p>
+
+    </header>
+
+    <div class="sub-section route-section">
+      <div class="sub-heading">
+        <h3>여행지 목록</h3>
+        
+      </div>
+      <div id="trip-plan-list" role="log" aria-label="선택한 여행지" aria-live="polite">
+        <p id="empty-trip-plan">지도에서 마음에 드는 여행지를 추가하세요.</p>
+      </div>
+    </div>
+
+    <details class="sub-section plan-settings">
+      <summary class="sub-heading"><h3>여행 정보 입력</h3></summary>
+    <div id="trip-plan-form" class="form-area">
+
+      <div class="form-group">
+        <label for="trip-title">
+          여행 제목
+        </label>
+
+        <input
+          type="text"
+          id="trip-title"
+          placeholder="여행 제목을 입력하세요"
+        />
+      </div>
+
+      <div class="form-group">
+
+        <div class="date-row">
+
+          <div class="date-field">
+            <label for="trip-start-date">
+              시작일
+            </label>
+
+            <input
+              type="date"
+              id="trip-start-date"
+            />
+          </div>
+
+          <span class="date-arrow" aria-hidden="true">
+            →
+          </span>
+
+          <div class="date-field">
+            <label for="trip-end-date">
+              종료일
+            </label>
+
+            <input
+              type="date"
+              id="trip-end-date"
+            />
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="form-group">
+        <label for="trip-budget">
+          여행 경비
+        </label>
+
+        <div class="budget-row">
+          <input
+            type="number"
+            id="trip-budget"
+            min="0"
+            placeholder="예상 경비를 입력하세요"
+          />
+
+          <span class="budget-unit">원</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="trip-detail">
+          상세 계획
+        </label>
+
+        <textarea
+          id="trip-detail"
+          rows="4"
+          placeholder="여행 상세 계획을 입력하세요"
+        ></textarea>
+      </div>
+
+    </div>
+    </details>
+
+    <div class="button-area">
+      <button id="btn-save-trip-plan">여행 계획 저장</button>
+    </div>
+
+
+    <details class="sub-section saved-collection">
+
+      <summary class="sub-heading">
+        <h3>저장된 여행 계획</h3>
+      </summary>
+
+      <div id="saved-trip-plan-list">
+        <p class="empty-message">
+          저장된 여행 계획이 없습니다.
+        </p>
+      </div>
+
+      <div id="selected-trip-plan-detail"></div>
+
+    </details>
+
+  </section>
+    </div>
+
+  <!-- =====================================
+       F105 - 나의 핫플
+  ====================================== -->
+
+  <section id="travel-record-section" role="tabpanel" aria-labelledby="hotplace-tab" tabindex="0" hidden>
+
+    <header class="section-header">
+
+      <div>
+        
+        <h2>나의 핫플</h2>
+      </div>
+
+      <p class="section-description">
+        여행지에서 발견한 특별한 장소를<br />
+        사진과 함께 기록해보세요.
+      </p>
+
+    </header>
+
+
+    <div id="travel-record-form">
+
+      <div class="hotplace-grid">
+
+        <!-- 사진 -->
+        <div class="form-group full-width">
+          <label for="record-image">
+            사진
+          </label>
+
+          <div class="image-field">
+
+            <input
+              type="file"
+              id="record-image"
+              accept="image/png,image/jpeg"
+            />
+
+            <div id="record-image-preview"></div>
+
+          </div>
+        </div>
+
+
+        <!-- 날짜 -->
+        <div class="form-group">
+          <label for="record-date">
+            다녀온 날짜
+          </label>
+
+          <input
+            type="date"
+            id="record-date"
+          />
+        </div>
+
+
+        <!-- 장소 유형 -->
+        <div class="form-group">
+          <label for="record-type">
+            장소 유형
+          </label>
+
+          <select id="record-type">
+
+            <option value="">
+              장소 유형 선택
+            </option>
+
+            <option value="관광지">
+              관광지
+            </option>
+
+            <option value="문화시설">
+              문화시설
+            </option>
+
+            <option value="공연/축제">
+              공연/축제
+            </option>
+
+            <option value="여행코스">
+              여행코스
+            </option>
+
+            <option value="숙박">
+              숙박
+            </option>
+
+            <option value="쇼핑">
+              쇼핑
+            </option>
+
+            <option value="음식점">
+              음식점
+            </option>
+
+            <option value="기타">
+              기타
+            </option>
+
+          </select>
+        </div>
+
+
+        <!-- 장소명 -->
+        <div class="form-group">
+          <label for="record-place">
+            장소명
+          </label>
+
+          <input
+            type="text"
+            id="record-place"
+            placeholder="장소명을 입력하세요"
+          />
+        </div>
+
+
+        <!-- 주소 -->
+        <div class="form-group">
+          <label for="record-address">
+            주소
+          </label>
+
+          <input
+            type="text"
+            id="record-address"
+            placeholder="주소를 입력하세요"
+          />
+        </div>
+
+
+        <!-- 상세 설명 -->
+        <div class="form-group full-width">
+          <label for="record-detail">
+            상세 설명
+          </label>
+
+          <textarea
+            id="record-detail"
+            rows="4"
+            placeholder="핫플에 대한 설명을 입력하세요"
+          ></textarea>
+        </div>
+
+      </div>
+
+
+      <div class="hotplace-save-area">
+        <button
+          type="button"
+          id="btn-save-travel-record"
+        >
+          핫플 저장
+        </button>
+      </div>
+
+    </div>
+
+
+    <details class="sub-section saved-collection">
+
+      <summary class="sub-heading">
+        <h3>저장된 핫플</h3>
+      </summary>
+
+      <div id="saved-travel-record-list">
+        <p class="empty-message">
+          저장된 핫플이 없습니다.
+        </p>
+      </div>
+
+    </details>
+
+  </section>
+    <section class="map-canvas" aria-label="관광지 지도">
+      <div class="map-heading">
+        <strong>여행 지도</strong>
+        <span>마커를 눌러 장소를 살펴보세요.</span>
+      </div>
+      <div id="map"></div>
+      <p id="map-status" role="status" aria-live="polite"></p>
+    </section>
+  </main>
+
+  <script src="./js/explorer-layout.js?v=20261106-map-select-fix" defer></script>
+
+  <script type="module" src="./js/tour-app.js?v=20261106-map-select-fix"></script>
+
+</body>
+</html>

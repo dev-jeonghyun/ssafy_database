@@ -1,0 +1,50 @@
+# Maven / Eclipse generated output
+/target/
+/bin/
+
+# Local API keys and environment settings (keep the blank example)
+.env
+.env.*
+!.env.example
+
+# Runtime member data, including backup copies
+member.dat
+member.dat.*
+
+# Private keys and local keystores
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+
+# Local STS workspace and server settings
+/.metadata/
+/Servers/
+
+# Logs and temporary files
+/logs/
+/tmp/
+/temp/
+*.log
+*.log.*
+*.tmp
+*.bak
+*.orig
+*.rej
+*.swp
+*.swo
+*~
+
+# OS metadata and local design-tool cache
+.DS_Store
+Thumbs.db
+Desktop.ini
+/.hallmark/
+
+# Keep .project, .classpath and .settings/ for STS import and project settings.
+# Keep README.md, docs/, src/ and pom.xml as submission files.
+
+# Local JDBC password
+/src/main/resources/db.properties
+/db.properties
